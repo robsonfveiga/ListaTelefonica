@@ -1,0 +1,17 @@
+﻿.jumbotron{
+    text-align:center;
+    width:600px;
+    margin:auto;
+    margin-top:20px;
+}
+            
+.jumbotron .body{
+    width:580px;
+    margin:auto;
+    margin-top:20px;
+}
+            
+.selecionado {
+    background-color:bisque !important;
+}
+            

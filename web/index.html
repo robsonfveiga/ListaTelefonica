@@ -1,0 +1,132 @@
+﻿<html ng-app="listaTelefonica">
+    <head>
+        <title>Hello World</title>
+        <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="css/app.css" />
+        <meta charset="utf-8" />
+
+        <script src="lib/angular/angular.js"></script>
+        <script src="lib/angular/locale/angular-locale_pt-br.js"></script>
+        <script src="lib/angular/angular-messages.js"></script>
+        <script src="js/app.js"></script>
+
+        <script src="js/config.js"></script>
+        <script src="js/config/serialGeneratorConfig.js"></script>
+
+
+        <script src="js/filters/nameFilter.js"></script>
+        <script src="js/filters/ellipsisFilter.js"></script>
+
+        <script src="js/services/contatosAPIService.js"></script>
+        <script src="js/services/operadorasAPIService.js"></script>
+        <script src="js/services/serialGeneratorService.js"></script>
+        <script src="js/controllers/listaTelefonicaCtrl.js"></script>
+
+    </head>
+    <body ng-controller="listaTelefonicaCtrl">
+        <div class="jumbotron">
+            <div class="body">
+                <h3>{{app}}</h3>
+
+                <div class="ui-alert">
+                    <div class="ui-alert-title">
+                        Ops, aconteceu um problema.
+                    </div>
+                    <div class="ui-alert-message">
+                        {{error}}
+                    </div>
+                </div>
+
+                <br/>
+                <input type="text" ng-model="criterioDeBusca" placeholder="O que você está buscando" class="form-control" />
+                <br/>
+
+                <table class="table table-striped" ng-show="contatos.length!=0">
+                    <thead>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td>
+                                <a href="" ng-click="ordenarPor('nome')">
+                                    Nomes
+                                </a>
+                            </td>
+                            <td>
+                                <a href="" ng-click="ordenarPor('telefone')">
+                                    Telefone
+                                </a>
+                            </td>
+                            <td>
+                                <a href="" ng-click="ordenarPor('operadora')">
+                                    Operadora
+                                </a>
+                            </td>
+                            <td>
+                                <a href="" ng-click="ordenarPor('data')">
+                                    Data
+                                </a>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-class="{selecionado:contato.selecionado}" ng-repeat="contato in contatos | filter:{nome:criterioDeBusca} | orderBy:criterioDeOrdenacao:direcaoOrdenacao">
+                            <td>
+                                <input type="checkbox" ng-model="contato.selecionado" />
+                            </td>
+                            <td title="{{contato.nome | name}}">
+                                {{contato.nome | name | ellipsis:20}}
+                            </td>
+                            <td>
+                                {{contato.telefone}}
+                            </td>
+                             <td>
+                                {{contato.operadora.nome | lowercase}}
+                            </td>
+                             <td>
+                                {{contato.data | date:'dd/mm/yyyy HH:MM'}}
+                            </td>
+                            <td>
+                                <div style="width:20px;height:20px;" ng-style="{'background-color':contato.operadora.color}"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <form name="contatoForm">
+                    <div>
+                        <input class="form-control" name="nome" type="text" ng-model="contato.nome" placeholder="nome" ng-required="true" ng-minlength='10'  />
+                        <br>
+                        <input class="form-control" name="telefone" type="text" ng-model="contato.telefone" placeholder="telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/" />
+                        <br>
+                        <select class="form-control" ng-model="contato.operadora" ng-options="operadora.nome +' ('+ (operadora.preco | currency ) +') ' for operadora in operadoras" >
+                            <option value="">Selecione uma operadora</option>
+                        </select>
+                    </div>
+                </form>
+
+                <div ng-messages="contatoForm.nome.$error" ng-show='!contatoForm.nome.$pristine && !contatoForm.nome.$valid'  class="alert alert-danger">
+                    <div ng-message="required">
+                        Prencha o nome
+                    </div>
+                    <div ng-message="minlength">
+                        O nome deve ter no minimo 10 caracteres
+                    </div>
+                </div>
+
+                <div ng-show="contatoForm.telefone.$error.required && contatoForm.telefone.$dirty" class="alert alert-danger" >
+                    Prencha o telefone
+                </div>
+
+                <div ng-show="contatoForm.telefone.$error.pattern" class="alert alert-danger" >
+                    Prencha com um telefone valido.
+                </div>
+
+                <button class="btn btn-primary" ng-click="addContato(contato)" ng-disabled='contatoForm.$invalid'>Adicionar</button>
+                <button class="btn btn-danger" ng-click="delContato(contatos)" ng-hide="!hasContatoSelecionado(contatos)" >Excluir</button>
+            </div>
+        </div>
+        <div ng-include="'partials/footer.html'">
+
+        </div>
+    </body>
+</html>
