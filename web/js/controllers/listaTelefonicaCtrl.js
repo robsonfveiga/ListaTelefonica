@@ -4,6 +4,10 @@
     $scope.contatos = [];
     $scope.operadoras = [];
 
+    $scope.contato = {
+        data:'2016-12-12T02:00:00.000Z'
+    }
+
     var carregarContatos = function () {
         contatosAPI.getContatos().success(function (data) {
             $scope.contatos = data;
